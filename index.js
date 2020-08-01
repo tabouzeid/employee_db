@@ -1,6 +1,5 @@
 const { prompt } = require("inquirer");
 const mysql = require("mysql");
-const data = require("./assets/js/data");
 require("console.table");
 
 loadMainPrompts();
