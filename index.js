@@ -271,24 +271,24 @@ async function removeRole() {
 }
 
 async function removeDepartment() {
-  const departments = await db.getDepartments();
+  connection.query(getDepartmentsQuery, function (err, departments) {
+    const departmentChoices = departments.map(({ id, name }) => ({
+      name: name,
+      value: id
+    }));
 
-  const departmentChoices = departments.map(({ id, name }) => ({
-    name: name,
-    value: id
-  }));
-
-  const { departmentId } = await prompt({
-    type: "list",
-    name: "departmentId",
-    message:
-      "Which department would you like to remove? (Warning: This will also remove associated roles and employees)",
-    choices: departmentChoices
+    prompt({
+      type: "list",
+      name: "departmentId",
+      message:
+        "Which department would you like to remove? (Warning: This will also remove associated roles and employees)",
+      choices: departmentChoices
+    }).then((department) => {
+      connection.query(deleteDepartmentQuery, department.departmentId, function (err, resp) {
+        printResults(`Removed department from the database`);
+      });
+    });
   });
-
-  await db.removeDepartment(departmentId);
-
-  printResults(`Removed department from the database`);
 }
 
 async function updateEmployeeRole() {
